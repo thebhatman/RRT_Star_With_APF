@@ -89,8 +89,10 @@ Mat bin(Mat a)
 
 int main()
 {
+	float learning_paramter = 100000000;
 	Mat a(500, 500, CV_8UC1, Scalar(0));
 	a=bin(a);
+
 	srand(time(0));
 	int i = 0,j = 0,k = 0, curr_tree_size = 0, m, n, s;
 	potential **pot_field = new potential*[a.rows];
@@ -145,6 +147,7 @@ int main()
 			}
 		}
 	}*/
+	Mat b = a.clone();
 	int OPP=25;
 	int r=10;
 	for(i=a.rows/OPP;i<a.rows-a.rows/OPP;i+=a.rows/OPP)
@@ -218,8 +221,14 @@ int main()
 			srctree.push_back(qnew);
 			curr_tree_size++;
 		}
+		curr_tree_size = srctree.size();
+		here:
+
 		qrand.curr.x = rand()%a.cols;
 		qrand.curr.y = rand()%a.rows;
+		//float adist = dist(qnear, qrand);
+		//qrand.curr.x = (max_step_size*qrand.curr.x + (adist-max_step_size)*qnear.curr.x)/adist;
+		//qrand.curr.y = (max_step_size*qrand.curr.y + (adist-max_step_size)*qnear.curr.y)/adist;
 		mindist = 9999999;
 		int x_co, y_co;
 		x_co = qrand.curr.x; y_co = qrand.curr.y;
@@ -239,7 +248,7 @@ int main()
 			{
 				angle = 1.57;
 			}
-			float magnitude = 100000000/pow(distance(qrand.curr.x, qrand.curr.y, obstacles[k].j, obstacles[k].i),2);
+			float magnitude = learning_paramter/pow(distance(qrand.curr.x, qrand.curr.y, obstacles[k].j, obstacles[k].i),2);
 			if(obstacles[k].j > qrand.curr.x && obstacles[k].i > qrand.curr.y)
 			{
 				net_field.magx += -magnitude*cos(angle);
@@ -363,16 +372,6 @@ int main()
 				mindist = d;
 			}
 		}
-		d = dist(qnear, qrand);
-		for(i = 0; i < d; i++)
-		{
-			node q;
-			q.curr.x = (i*qrand.curr.x + (d-i)*qnear.curr.x)/d;
-			q.curr.y = (i*qrand.curr.y + (d-i)*qnear.curr.y)/d;
-			int e = q.curr.y;
-			int f = q.curr.x;
-			if(a.at<uchar>(e,f) > 220) goto here;
-		}
 		if(d > max_step_size)
 		{
 			qnew.curr.x = (max_step_size*qrand.curr.x + (d - max_step_size)*qnear.curr.x)/d;
@@ -382,6 +381,17 @@ int main()
 		{
 			qnew = qrand;
 		}
+		d = dist(qnear, qrand);
+		for(i = 0; i < d; i++)
+		{
+			node q;
+			q.curr.x = (i*qnew.curr.x + (d-i)*qnear.curr.x)/d;
+			q.curr.y = (i*qnew.curr.y + (d-i)*qnear.curr.y)/d;
+			int e = q.curr.y;
+			int f = q.curr.x;
+			if(a.at<uchar>(e,f) > 220) goto here;
+		}
+		
 		
 		for(i = 0; i < curr_tree_size; i++)
 		{
@@ -458,7 +468,7 @@ int main()
 		{
 			dest.mommy.curr.x = qnew.curr.x; dest.mommy.curr.y = qnew.curr.y;
 			dest.mommy.index = qnew.my_index;
-			dest.my_index = srctree.size() - 1;
+			dest.my_index = srctree.size();
 			srctree.push_back(dest);
 			temp3.curr.x = dest.curr.x; temp3.curr.y = dest.curr.y;
 			line(a, dest.mommy.curr, temp3.curr, Scalar(128), 1, 8, 0);
@@ -468,7 +478,7 @@ int main()
 	}
     imshow("star_apf",a);
     namedWindow("Final_apf", WINDOW_NORMAL);
-	Mat b(a.rows, a.cols, CV_8UC1, Scalar(0));
+	
 	k = srctree.size() - 1;
 	while(k !=0 )
 	{
