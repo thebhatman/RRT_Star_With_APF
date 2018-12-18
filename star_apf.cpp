@@ -187,11 +187,22 @@ int main()
 	while(1)
 	{
 		node qnew;
+		curr_tree_size = srctree.size();
+		here:
 		if(curr_tree_size == 1)
 		{
 			qrand.curr.x = rand()%a.cols;
 			qrand.curr.y = rand()%a.rows;
 			d = dist(qnear, qrand);
+			for(i = 0; i < d; i++)
+			{
+				node q;
+				q.curr.x = (i*qrand.curr.x + (d-i)*qnear.curr.x)/d;
+				q.curr.y = (i*qrand.curr.y + (d-i)*qnear.curr.y)/d;
+				int e = q.curr.y;
+				int f = q.curr.x;
+				if(a.at<uchar>(e,f) > 220) goto here;
+			}
 			if(d > max_step_size)
 			{
 				qnew.curr.x = (max_step_size*qrand.curr.x + (d - max_step_size)*qnear.curr.x)/d;
@@ -420,7 +431,7 @@ int main()
 				srctree[i].neighbours.push_back(temp1);
 			}
 		}*/
-		int flag = 0;
+		int flag;
 		for(i = 0; i < qnew.neighbours.size(); i++)
 		{
 			flag = 0;
