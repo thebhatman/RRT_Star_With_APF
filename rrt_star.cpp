@@ -249,6 +249,7 @@ int main()
 		int flag = 0;
 		for(i = 0; i < qnew.neighbours.size(); i++)
 		{
+			flag = 0;
 			d1 = distance(qnew.curr.x, qnew.curr.y, qnew.neighbours[i].curr.x, qnew.neighbours[i].curr.y);
 			for(j = 0; j < d1; j++)
 			{
@@ -279,8 +280,8 @@ int main()
 		{
 			dest.mommy.curr.x = qnew.curr.x; dest.mommy.curr.y = qnew.curr.y;
 			dest.mommy.index = qnew.my_index;
+			dest.my_index = srctree.size();
 			srctree.push_back(dest);
-			dest.my_index = srctree.size() - 1;
 			temp3.curr.x = dest.curr.x; temp3.curr.y = dest.curr.y;
 			line(a, dest.mommy.curr, temp3.curr, Scalar(128), 1, 8, 0);
 			break;
