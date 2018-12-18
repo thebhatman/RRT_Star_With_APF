@@ -372,15 +372,6 @@ int main()
 				mindist = d;
 			}
 		}
-		if(d > max_step_size)
-		{
-			qnew.curr.x = (max_step_size*qrand.curr.x + (d - max_step_size)*qnear.curr.x)/d;
-			qnew.curr.y = (max_step_size*qrand.curr.y + (d - max_step_size)*qnear.curr.y)/d;
-		}
-		else
-		{
-			qnew = qrand;
-		}
 		d = dist(qnear, qrand);
 		for(i = 0; i < d; i++)
 		{
@@ -390,6 +381,15 @@ int main()
 			int e = q.curr.y;
 			int f = q.curr.x;
 			if(a.at<uchar>(e,f) > 220) goto here;
+		}
+		if(d > max_step_size)
+		{
+			qnew.curr.x = (max_step_size*qrand.curr.x + (d - max_step_size)*qnear.curr.x)/d;
+			qnew.curr.y = (max_step_size*qrand.curr.y + (d - max_step_size)*qnear.curr.y)/d;
+		}
+		else
+		{
+			qnew = qrand;
 		}
 		
 		
